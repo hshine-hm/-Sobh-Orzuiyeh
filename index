@@ -50,7 +50,8 @@
       flex-direction: column;
       overflow: hidden;
       font-family: 'Vazirmatn', 'Tahoma', sans-serif;
-    }
+    
+}
 
     .card-content {
       position: relative;
@@ -286,11 +287,7 @@
 
   <button class="download-btn" onclick="downloadPNG()">📸 دانلود تصویر کارت (PNG)</button>
 
-  <script>
-       var bgImageBase64 = "";
-    
-    document.getElementById('story-card').style.backgroundImage = 'url(' + bgImageBase64 + ')';
-
+ 
     function fa(n) {
       return String(n).replace(/[0-9]/g, d => ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'][d]);
     }
