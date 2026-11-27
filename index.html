@@ -251,9 +251,7 @@ background-repeat: no-repeat;
       box-shadow: 0 8px 20px rgba(212, 175, 55, 0.5);
     }
   </style>
-  
-  <script src="dom-to-image-more.min.js"></script>
-</head>
+  </head>
 <body>
 
   <div id="story-card">
@@ -287,7 +285,76 @@ background-repeat: no-repeat;
 
   <button class="download-btn" onclick="downloadPNG()">📸 دانلود تصویر کارت (PNG)</button>
 
- 
+   <script>
+    // تنظیمات اولیه
+    const lat = 28.45; // مختصات تقریبی ارزوئیه
+    const lon = 56.36;
+
+    // تابع برای تبدیل تاریخ میلادی به شمسی
+    function toPersianDate(date) {
+        return new Intl.DateTimeFormat('fa-IR', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        }).format(date);
+    }
+
+    // دریافت اوقات شرعی
+    async function fetchPrayerTimes() {
+        try {
+            const response = await fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=7`);
+            const data = await response.json();
+            const timings = data.data.timings;
+
+            document.getElementById('prayer-grid').innerHTML = `
+                <div class="prayer-box">
+                    <div class="prayer-label">اذان صبح</div>
+                    <div class="prayer-time">${timings.Fajr}</div>
+                </div>
+                <div class="prayer-box">
+                    <div class="prayer-label">طلوع آفتاب</div>
+                    <div class="prayer-time">${timings.Sunrise}</div>
+                </div>
+                <div class="prayer-box">
+                    <div class="prayer-label">اذان ظهر</div>
+                    <div class="prayer-time">${timings.Dhuhr}</div>
+                </div>
+                <div class="prayer-box">
+                    <div class="prayer-label">اذان مغرب</div>
+                    <div class="prayer-time">${timings.Maghrib}</div>
+                </div>
+            `;
+            
+            document.getElementById('date-text').innerText = toPersianDate(new Date());
+        } catch (error) {
+            console.error("خطا در دریافت اوقات شرعی:", error);
+            document.getElementById('prayer-grid').innerHTML = "<p>خطا در دریافت اطلاعات</p>";
+        }
+    }
+
+    // دریافت هواشناسی
+    async function fetchWeather() {
+        try {
+            const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+            const data = await response.json();
+            const weather = data.current_weather;
+
+            document.getElementById('weather-box').innerHTML = `
+                <div class="weather-main">
+                    <div class="weather-temp">${weather.temperature}°C</div>
+                    <div class="weather-desc">سرعت باد: ${weather.windspeed} km/h</div>
+                </div>
+            `;
+        } catch (error) {
+            console.error("خطا در دریافت هواشناسی:", error);
+            document.getElementById('weather-box').innerHTML = "<p>خطا در دریافت اطلاعات</p>";
+        }
+    }
+
+    // اجرای توابع هنگام لود صفحه
+    window.onload = () => {
+        fetchPrayerTimes();
+        fetchWeather();
+    };
+  </script>
     function fa(n) {
       return String(n).replace(/[0-9]/g, d => ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'][d]);
     }
